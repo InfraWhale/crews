@@ -1,13 +1,13 @@
-package com.tigercave.crews;
+package com.tigercavern.dooling;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CrewsApplication {
+public class DoolingApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CrewsApplication.class, args);
+		SpringApplication.run(DoolingApplication.class, args);
 	}
 
 }
