@@ -1,10 +1,7 @@
 package com.tigercavern.dooling.member.entity;
 
 import com.tigercavern.dooling.member.dto.JoinMemberRequest;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -32,11 +29,8 @@ public class Member {
 
     private String phoneNumber;
 
-    private String address;
-
-    private String detailAddress;
-
-    private String zipCode;
+    @Embedded
+    private Address address;
 
     private boolean adminCheck;
 
@@ -56,6 +50,8 @@ public class Member {
         this.name = request.getName();
         this.nickName = request.getNickName();
         this.phoneNumber = request.getPhoneNumber();
+        this.adminCheck = false;
+        this.cancelCheck = false;
         this.joinDate = now();
         this.updateDate = now();
     }

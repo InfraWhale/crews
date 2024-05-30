@@ -1,5 +1,6 @@
 package com.tigercavern.dooling.member.controller;
 
+import com.tigercavern.dooling.member.dto.FindMemberResponse;
 import com.tigercavern.dooling.member.dto.JoinMemberRequest;
 import com.tigercavern.dooling.member.dto.UpdateMemberRequest;
 import com.tigercavern.dooling.member.dto.UpdateMemberResponse;
@@ -7,12 +8,13 @@ import com.tigercavern.dooling.member.entity.Member;
 import com.tigercavern.dooling.member.repository.MemberRepository;
 import com.tigercavern.dooling.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,9 +31,17 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.CREATED).body(loginId);
     }
 
-    @PostMapping("/api/user/{email}")
+    @PostMapping("/api/member/update/{email}")
     public UpdateMemberResponse updateMember(@PathVariable("email") String email,
                                              @RequestBody UpdateMemberRequest request) {
         return memberService.update(email, request);
+    }
+
+    @GetMapping("/api/member/findByEmail/{email}")
+    public FindMemberResponse findByEmail(@PathVariable("email") String email) {
+
+        memberService.findByEmail(email);
+
+        return memberService.findByEmail(email);
     }
 }

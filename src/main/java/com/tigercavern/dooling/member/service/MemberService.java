@@ -1,5 +1,6 @@
 package com.tigercavern.dooling.member.service;
 
+import com.tigercavern.dooling.member.dto.FindMemberResponse;
 import com.tigercavern.dooling.member.dto.UpdateMemberRequest;
 import com.tigercavern.dooling.member.dto.UpdateMemberResponse;
 import com.tigercavern.dooling.member.entity.Member;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.time.LocalDateTime.now;
 import static org.springframework.util.StringUtils.hasText;
@@ -58,5 +60,20 @@ public class MemberService {
         if (!findMembers.isEmpty()) {
             throw new IllegalStateException("이미 존재하는 이메일입니다.");
         }
+    }
+
+    public FindMemberResponse findByEmail(String email) {
+
+        Optional<Member> OpMember = memberRepository.findByEmail(email);
+        FindMemberResponse response;
+
+        if(OpMember.isPresent()) {
+            Member member = OpMember.get();
+            response = new FindMemberResponse(member);
+        } else {
+            response = new FindMemberResponse();
+        }
+
+        return response;
     }
 }
