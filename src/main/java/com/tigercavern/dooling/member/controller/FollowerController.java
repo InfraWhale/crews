@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,18 +26,59 @@ public class FollowerController {
     private final MemberRepository memberRepository;
 
     // 특정 계정 팔로우
-/*    @PostMapping("/api/follower/add")
-    public ResponseEntity addfollowing(@RequestBody addFollowingRequest request) {
-        Optional<Member> follower = memberRepository.findById(request.getFollowerId());
-        Optional<Member> following = memberRepository.findById(request.getFollowingId());
-    }*/
+    @PostMapping("/api/follower/add")
+    public addFollowingResponse addfollowing(@RequestBody addFollowingRequest request) {
+        try {
+            Member followed = memberRepository.findById(request.getFollowedId()).orElseThrow();
+            Member following = memberRepository.findById(request.getFollowingId()).orElseThrow();
+            Follower follower = new Follower(followed, following);
+
+            followerRepository.save(follower);
+
+            return new addFollowingResponse(followed.getId(), followed.getEmail(), following.getId(), followed.getEmail());
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    
+    // 특정 계정 팔로우 취소
 
 
-    // 해당 계정을 팔로우하는 리스트
-    @GetMapping("/api/follower/findFollowers/{email}")
-    public List<ListFollowerResponse> findFollowers(@PathVariable("email") String email
-    ) {
-        return followerRepository.findFollowers(email);
+    // 해당 계정을 팔로잉하는 리스트 (카운트도 필요)
+    @GetMapping("/api/follower/listFollowing/{id}")
+    public List<ListFollowingResponse> listFollowing(@PathVariable("id") Long id) {
+        try {
+            Member followed = memberRepository.findById(id).orElseThrow();
+
+            List<Follower> followers = followerRepository.findAllByFollowed(followed);
+            List<ListFollowingResponse> result = followers.stream()
+                    .map(ListFollowingResponse::new)
+                    .collect(Collectors.toList());
+
+            return result;
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    // 해당 계정이 팔로우하는 리스트 (카운트도 필요)
+    @GetMapping("/api/follower/listFollowed/{id}")
+    public List<ListFollowedResponse> listFollowed(@PathVariable("id") Long id) {
+        try {
+            Member following = memberRepository.findById(id).orElseThrow();
+
+            List<Follower> followers = followerRepository.findAllByFollowing(following);
+            List<ListFollowedResponse> result = followers.stream()
+                    .map(ListFollowedResponse::new)
+                    .collect(Collectors.toList());
+
+            return result;
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 /*    @GetMapping("/api/follower/findFollowers/{email}")
     public Page<ListFollowerResponse> findFollowers(@PathVariable("email") String email,
@@ -47,14 +89,5 @@ public class FollowerController {
         Pageable pageable = PageRequest.of(page, pageSize);
         Page<Follower> pages = followerRepository.findFollowers(pageable);
         return pages.map(ListFollowerResponse::new);
-    }*/
-
-/*    // 해당 계정이 팔로잉하는 리스트
-    @GetMapping("/api/follower/findFollowings/{email}")
-    public FindMemberResponse findFollowings(@PathVariable("email") String email) {
-
-        memberService.findByEmail(email);
-
-        return memberService.findByEmail(email);
     }*/
 }

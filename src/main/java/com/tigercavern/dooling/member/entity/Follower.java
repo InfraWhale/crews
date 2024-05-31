@@ -12,14 +12,19 @@ import lombok.Setter;
 public class Follower {
 
     @Id @GeneratedValue
-    @Column(name = "follower_identifier_id")
+    @Column(name = "follower_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "follower_id")
-    private Member follower;
+    @JoinColumn(name = "followed_id")
+    private Member followed;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "following_id")
     private Member following;
+
+    public Follower(Member followed, Member following) {
+        this.followed = followed;
+        this.following = following;
+    }
 }

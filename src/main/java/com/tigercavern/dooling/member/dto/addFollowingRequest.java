@@ -4,6 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class addFollowingRequest {
-    private Long followerId;
+    private Long followedId;
     private Long followingId;
 }

@@ -8,5 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FollowerRepository extends JpaRepository<Follower, Long>, FollowerRepositoryCustom {
+    List<Follower> findAllByFollowed(Member followed);
 
+    List<Follower> findAllByFollowing(Member following);
 }

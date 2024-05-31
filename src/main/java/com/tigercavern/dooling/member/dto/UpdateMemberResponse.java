@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter @Setter
 @AllArgsConstructor
 public class UpdateMemberResponse {
-    private String email;
+    private Long id;
 
     private String password = "not updated";
 
@@ -21,7 +21,7 @@ public class UpdateMemberResponse {
 
     private LocalDateTime updateDate;
 
-    public UpdateMemberResponse(String email) {
-        this.email = email;
+    public UpdateMemberResponse(Long id) {
+        this.id = id;
     }
 }

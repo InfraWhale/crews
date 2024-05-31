@@ -27,11 +27,11 @@ public class MemberService {
         return member.getEmail();
     }
 
-    public UpdateMemberResponse update(String email, UpdateMemberRequest request) {
-        Member member = memberRepository.findByEmail(email)
+    public UpdateMemberResponse update(Long id, UpdateMemberRequest request) {
+        Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("업데이트 할 회원 정보가 없습니다."));
 
-        UpdateMemberResponse response = new UpdateMemberResponse(email);
+        UpdateMemberResponse response = new UpdateMemberResponse(id);
 
         if(hasText(request.getPassword())) {
             member.setPassword(request.getPassword());
