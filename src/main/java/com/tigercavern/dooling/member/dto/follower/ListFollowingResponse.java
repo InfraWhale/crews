@@ -1,4 +1,4 @@
-package com.tigercavern.dooling.member.dto;
+package com.tigercavern.dooling.member.dto.follower;
 
 import com.querydsl.core.annotations.QueryProjection;
 import com.tigercavern.dooling.member.entity.Address;

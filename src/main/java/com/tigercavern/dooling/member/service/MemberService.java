@@ -1,8 +1,8 @@
 package com.tigercavern.dooling.member.service;
 
-import com.tigercavern.dooling.member.dto.FindMemberResponse;
-import com.tigercavern.dooling.member.dto.UpdateMemberRequest;
-import com.tigercavern.dooling.member.dto.UpdateMemberResponse;
+import com.tigercavern.dooling.member.dto.member.FindMemberResponse;
+import com.tigercavern.dooling.member.dto.member.UpdateMemberRequest;
+import com.tigercavern.dooling.member.dto.member.UpdateMemberResponse;
 import com.tigercavern.dooling.member.entity.Member;
 import com.tigercavern.dooling.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

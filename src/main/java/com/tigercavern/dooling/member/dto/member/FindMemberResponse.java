@@ -1,4 +1,4 @@
-package com.tigercavern.dooling.member.dto;
+package com.tigercavern.dooling.member.dto.member;
 
 import com.tigercavern.dooling.member.entity.Address;
 import com.tigercavern.dooling.member.entity.Member;

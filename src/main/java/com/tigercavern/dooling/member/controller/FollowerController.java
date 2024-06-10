@@ -1,21 +1,17 @@
 package com.tigercavern.dooling.member.controller;
 
-import com.tigercavern.dooling.member.dto.*;
+import com.tigercavern.dooling.member.dto.follower.*;
 import com.tigercavern.dooling.member.entity.Follower;
 import com.tigercavern.dooling.member.entity.Member;
 import com.tigercavern.dooling.member.repository.FollowerRepository;
 import com.tigercavern.dooling.member.repository.MemberRepository;
-import com.tigercavern.dooling.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -27,7 +23,7 @@ public class FollowerController {
 
     // 특정 계정 팔로우
     @PostMapping("/api/follower/add")
-    public addFollowingResponse addfollowing(@RequestBody addFollowingRequest request) {
+    public addFollowingResponse addFollowing(@RequestBody addFollowingRequest request) {
         try {
             Member followed = memberRepository.findById(request.getFollowedId()).orElseThrow();
             Member following = memberRepository.findById(request.getFollowingId()).orElseThrow();
@@ -43,51 +39,54 @@ public class FollowerController {
     }
     
     // 특정 계정 팔로우 취소
+    @DeleteMapping("/api/follower/delete")
+    public deleteFollowingResponse deleteFollowing(@RequestBody deleteFollowingRequest request) {
+        try {
+            Member followed = memberRepository.findById(request.getFollowedId()).orElseThrow();
+            Member following = memberRepository.findById(request.getFollowingId()).orElseThrow();
+            Follower follower = new Follower(followed, following);
 
+            followerRepository.delete(follower);
 
-    // 해당 계정을 팔로잉하는 리스트 (카운트도 필요)
+            return new deleteFollowingResponse(followed.getId(), followed.getEmail(), following.getId(), followed.getEmail());
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    // 해당 계정을 팔로잉하는 리스트
     @GetMapping("/api/follower/listFollowing/{id}")
-    public List<ListFollowingResponse> listFollowing(@PathVariable("id") Long id) {
+    public Page<ListFollowingResponse> listFollowing(@PathVariable("id") Long id,
+                                                     @RequestParam(name = "page", defaultValue = "0") int page,
+                                                     @RequestParam(name = "pageSize", defaultValue = "5") int pageSize) {
         try {
+            Pageable pageable = PageRequest.of(page, pageSize);
             Member followed = memberRepository.findById(id).orElseThrow();
+            Page<Follower> followers = followerRepository.findAllByFollowed(followed, pageable);
 
-            List<Follower> followers = followerRepository.findAllByFollowed(followed);
-            List<ListFollowingResponse> result = followers.stream()
-                    .map(ListFollowingResponse::new)
-                    .collect(Collectors.toList());
-
-            return result;
+            return followers.map(ListFollowingResponse::new);
         } catch(Exception e) {
             e.printStackTrace();
             throw e;
         }
     }
 
-    // 해당 계정이 팔로우하는 리스트 (카운트도 필요)
+
+    // 해당 계정이 팔로우하는 리스트
     @GetMapping("/api/follower/listFollowed/{id}")
-    public List<ListFollowedResponse> listFollowed(@PathVariable("id") Long id) {
+    public Page<ListFollowedResponse> listFollowed(@PathVariable("id") Long id,
+                                                   @RequestParam(name = "page", defaultValue = "0") int page,
+                                                   @RequestParam(name = "pageSize", defaultValue = "5") int pageSize) {
         try {
+            Pageable pageable = PageRequest.of(page, pageSize);
             Member following = memberRepository.findById(id).orElseThrow();
+            Page<Follower> followers = followerRepository.findAllByFollowing(following, pageable);
 
-            List<Follower> followers = followerRepository.findAllByFollowing(following);
-            List<ListFollowedResponse> result = followers.stream()
-                    .map(ListFollowedResponse::new)
-                    .collect(Collectors.toList());
-
-            return result;
+            return followers.map(ListFollowedResponse::new);
         } catch(Exception e) {
             e.printStackTrace();
             throw e;
         }
     }
-/*    @GetMapping("/api/follower/findFollowers/{email}")
-    public Page<ListFollowerResponse> findFollowers(@PathVariable("email") String email,
-                                                    @RequestParam(name = "page", defaultValue = "0") int page,
-                                                    @RequestParam(name = "pageSize", defaultValue = "5") int pageSize
-    ) {
-
-        Pageable pageable = PageRequest.of(page, pageSize);
-        Page<Follower> pages = followerRepository.findFollowers(pageable);
-        return pages.map(ListFollowerResponse::new);
-    }*/
 }

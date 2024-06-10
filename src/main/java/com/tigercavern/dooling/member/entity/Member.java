@@ -1,6 +1,6 @@
 package com.tigercavern.dooling.member.entity;
 
-import com.tigercavern.dooling.member.dto.JoinMemberRequest;
+import com.tigercavern.dooling.member.dto.member.JoinMemberRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
