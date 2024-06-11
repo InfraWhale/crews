@@ -5,6 +5,8 @@ import com.tigercavern.dooling.member.entity.Follower;
 import com.tigercavern.dooling.member.entity.Member;
 import com.tigercavern.dooling.member.repository.FollowerRepository;
 import com.tigercavern.dooling.member.repository.MemberRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +22,8 @@ public class FollowerController {
 
     private final FollowerRepository followerRepository;
     private final MemberRepository memberRepository;
+    @PersistenceContext
+    EntityManager em;
 
     // 특정 계정 팔로우
     @PostMapping("/api/follower/add")
@@ -40,6 +44,30 @@ public class FollowerController {
     
     // 특정 계정 팔로우 취소
     @DeleteMapping("/api/follower/delete")
+    public String deleteFollowing(@RequestBody deleteFollowingRequest request) {
+        try {
+            Member followed = memberRepository.findById(request.getFollowedId()).orElseThrow();
+            Member following = memberRepository.findById(request.getFollowingId()).orElseThrow();
+            //Follower follower = new Follower(followed, following);
+            
+            // 위의 방식대로 하면 영속화 안됨 -> 영속화 되지 않은 대상은 delete() 불가
+            Follower follower = followerRepository.findByFollowedAndFollowing(followed, following);
+            followerRepository.delete(follower);
+
+            int count = followerRepository.countByFollowedAndFollowing(followed, following);
+
+            if (count == 0) {
+                return "success";
+            } else {
+                return "fail";
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+/*    @DeleteMapping("/api/follower/delete")
     public deleteFollowingResponse deleteFollowing(@RequestBody deleteFollowingRequest request) {
         try {
             Member followed = memberRepository.findById(request.getFollowedId()).orElseThrow();
@@ -53,7 +81,7 @@ public class FollowerController {
             e.printStackTrace();
             throw e;
         }
-    }
+    }*/
 
     // 해당 계정을 팔로잉하는 리스트
     @GetMapping("/api/follower/listFollowing/{id}")
